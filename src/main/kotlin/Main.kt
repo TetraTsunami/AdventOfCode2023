@@ -1,3 +1,5 @@
+import util.DayPuzzle
+import util.loadDayData
 import java.util.*
 import java.io.File
 
@@ -12,6 +14,7 @@ fun main(args: Array<String>) {
                 }
             }
             "r" -> runLatest()
+            "d" -> loadAndSaveToday()
             else -> runDay(args[0].toInt())
         }
         return
@@ -19,39 +22,50 @@ fun main(args: Array<String>) {
 
     // If there aren't command line arguments, prompt the user for input.
     val scanner = Scanner(System.`in`)
-    print("Pick a day, \"a\" for all, or \"r\" for highest implemented: ")
-    val input = scanner.nextLine()
-    if (input == "a") {
-        val startTime = System.currentTimeMillis()
-        for (day in 1..25) {
-            runDay(day)
+    print("Pick a day, \"a\" for all, \"r\" for highest implemented, " +
+            "or \"d\" to download today's data: ")
+    when (val input = scanner.nextLine()) {
+        "a" -> {
+            val startTime = System.currentTimeMillis()
+            for (day in 1..25) {
+                runDay(day, false)
+            }
+            val endTime = System.currentTimeMillis()
+            println("Total time: ${(endTime - startTime) / 1000.0} seconds")
         }
-        val endTime = System.currentTimeMillis()
-        println("Total time: ${(endTime - startTime) / 1000.0} seconds")
-    } else if (input == "r" || input == "") {
-        runLatest()
-    } else if (input.toInt() in 1..25) {
-        runDay(input.toInt())
+        "r", "" -> runLatest()
+        "d" -> loadAndSaveToday()
+        else -> runDay(input.toInt())
     }
 }
 
 /**
  * Run a specific day.
  */
-fun runDay(day: Int) {
+fun runDay(day: Int, useTests: Boolean = true) {
     try {
         val dayString = day.toString().padStart(2, '0')
         val dayClass = Class.forName("adventOfCode$year.Day$dayString")
-        val dayConstructor = dayClass.getConstructor(String::class.java)
+        val dayConstructor = dayClass.getConstructor(String::class.java, Boolean::class.java)
 
-        if (File("src/main/resources/Day${dayString}test.txt").exists()) {
+        // If the input file doesn't exist, download it.
+        if (!File("src/main/resources/Day${dayString}.txt").exists()) {
+            println("Day $day\n\tInput not found, trying to download...")
+            loadAndSaveDate(year, day)
+            println("Data downloaded!")
+        }
+
+        // If the test file exists, run the day with the test input first.
+        if (useTests && File("src/main/resources/Day${dayString}test.txt").exists()) {
             val dayData = File("src/main/resources/Day${dayString}test.txt").readText()
-            val dayInstance = dayConstructor.newInstance(dayData)
+            val dayInstance = dayConstructor.newInstance(dayData, true)
             println("Day $day (test)")
             dayInstance.javaClass.getMethod("run").invoke(dayInstance)
         }
+
+        // Run the day with the real input.
         val dayData = File("src/main/resources/Day${dayString}.txt").readText()
-        val dayInstance = dayConstructor.newInstance(dayData)
+        val dayInstance = dayConstructor.newInstance(dayData, false)
         println("Day $day")
         dayInstance.javaClass.getMethod("run").invoke(dayInstance)
     } catch (e: ClassNotFoundException) {
@@ -63,7 +77,7 @@ fun runDay(day: Int) {
  * Run the highest implemented day.
  */
 fun runLatest() {
-    // would love to know if there's a better way to do this
+    // TODO: would love to know if there's a better way to do this
     for (day in 2..26) {
         try {
             val dayString = day.toString().padStart(2, '0')
@@ -73,4 +87,31 @@ fun runLatest() {
             break
         }
     }
+}
+
+fun loadAndSaveToday() {
+    val calendar = Calendar.getInstance()
+    calendar.timeZone = TimeZone.getTimeZone("America/New_York") // puzzle input is released at midnight EST
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val dayString = day.toString().padStart(2, '0')
+    if (File("src/main/resources/Day${dayString}.txt").exists()) {
+        println("Day $day\n\tInput already downloaded")
+        return
+    }
+
+    val dayData = loadAndSaveDate(year, day)
+    println("Day $day")
+    println("Example input:")
+    println(dayData.exampleInput.split("\n").joinToString("\n") { "\t$it" })
+    println("Input:")
+    println(dayData.input.split("\n").joinToString("\n") { "\t$it" })
+}
+
+fun loadAndSaveDate(year: Int, day: Int): DayPuzzle {
+    val dayData = loadDayData(year, day)
+
+    val dayString = day.toString().padStart(2, '0')
+    File("src/main/resources/day${dayString}test.txt").writeText(dayData.exampleInput)
+    File("src/main/resources/day${dayString}.txt").writeText(dayData.input)
+    return dayData
 }

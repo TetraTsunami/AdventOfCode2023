@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day02(input: String) : Day(input) {
+class Day02(input: String, isTest : Boolean = false) : Day(input, isTest) {
     override fun solve() {
         var sum1 = 0
         var sum2 = 0
@@ -30,6 +30,7 @@ class Day02(input: String) : Day(input) {
                 sum1 += id.toInt()
             }
             sum2 += (maxR * maxG * maxB)
+            pt(maxR, maxG, maxB)
         }
         a(sum1, sum2)
     }

@@ -2,7 +2,7 @@
 package util
 
 class DayCompleteException(message: String) : Exception(message)
-abstract class Day(protected var input: String) {
+abstract class Day(protected var input: String, protected val isTest: Boolean) {
     protected val startTime = System.currentTimeMillis()
     protected val lines: List<String>
     protected var part1Solved = false
@@ -72,5 +72,12 @@ abstract class Day(protected var input: String) {
         for (i in inp) {
             a(i)
         }
+    }
+
+    /**
+     * Print a message to the console if the day is in test mode. Useful for debugging.
+     */
+    fun pt(vararg message: Any) {
+        if (isTest) println(message.joinToString(" "))
     }
 }
