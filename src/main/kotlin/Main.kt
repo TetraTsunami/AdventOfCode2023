@@ -8,11 +8,7 @@ fun main(args: Array<String>) {
     // If there are command line arguments, run the specified days, all days, or the highest implemented day.
     if (args.isNotEmpty()) {
         when (args[0]) {
-            "a" -> {
-                for (day in 1..25) {
-                    runDay(day)
-                }
-            }
+            "a" -> runAll()
             "r" -> runLatest()
             "d" -> loadAndSaveToday()
             else -> runDay(args[0].toInt())
@@ -25,20 +21,21 @@ fun main(args: Array<String>) {
     print("Pick a day, \"a\" for all, \"r\" for highest implemented, " +
             "or \"d\" to download today's data: ")
     when (val input = scanner.nextLine()) {
-        "a" -> {
-            val startTime = System.currentTimeMillis()
-            for (day in 1..25) {
-                runDay(day, false)
-            }
-            val endTime = System.currentTimeMillis()
-            println("Total time: ${(endTime - startTime) / 1000.0} seconds")
-        }
+        "a" -> runAll()
         "r", "" -> runLatest()
         "d" -> loadAndSaveToday()
         else -> runDay(input.toInt())
     }
 }
 
+fun runAll() {
+    val startTime = System.currentTimeMillis()
+    for (day in 1..25) {
+        runDay(day, false)
+    }
+    val endTime = System.currentTimeMillis()
+    println("Total time: ${(endTime - startTime) / 1000.0} seconds")
+}
 /**
  * Run a specific day.
  */
