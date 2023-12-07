@@ -108,7 +108,7 @@ fun loadAndSaveDate(year: Int, day: Int): DayPuzzle {
     val dayData = loadDayData(year, day)
 
     val dayString = day.toString().padStart(2, '0')
-    File("src/main/resources/day${dayString}test.txt").writeText(dayData.exampleInput)
+    File("src/main/resources/day${dayString}test.txt").writeText(dayData.exampleInput + "\n")
     File("src/main/resources/day${dayString}.txt").writeText(dayData.input)
     return dayData
 }
