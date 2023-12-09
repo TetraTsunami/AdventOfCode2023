@@ -8,56 +8,49 @@ class Day07(input: String, isTest : Boolean = false) : Day(input, isTest) {
         var j = 0
         for (i in 0..4) {
             val card = hand.first[i]
-            if (card == 'J') {
-                j++
-            } else {
-                val freq = freqMap.getOrDefault(card, 0)
-                freqMap[card] = freq + 1
+            if (card == 'J') j++
+            else {
+                freqMap[card] = freqMap.getOrDefault(card, 0) + 1
             }
         }
-        val mostCommon = freqMap.entries.maxByOrNull { it.value }
-        if (mostCommon == null) {
-            freqMap['A'] = freqMap.getOrDefault('A', 0) + j
+        // joker logic
+        if (freqMap.isEmpty()) {
+            freqMap['A'] = j
         } else {
-            freqMap[mostCommon.key] = freqMap.getOrDefault(mostCommon.key, 0) + j
+            val mc = freqMap.entries.maxBy { it.value }
+            freqMap[mc.key] = freqMap.getOrDefault(mc.key, 0) + j
         }
         return freqMap
     }
     fun pickType(hand: Pair<String, Int>): Int {
         val freqs = getFreqMap(hand).values.sortedDescending()
-        if (freqs[0] == 5) {
-            return 6
-        }
-        if (freqs[0] == 4) {
-            return 5
-        }
-        if (freqs[0] == 3) {
-            if (freqs[1] == 2) {
-                return 4
+        when (freqs[0]) {
+            5 -> return 6
+            4 -> return 5
+            3 -> {
+                if (freqs[1] == 2) return 4
+                return 3
             }
-            return 3
-        }
-        if (freqs[0] == 2) {
-            if (freqs[1] == 2) {
-                return 2
+            2 -> {
+                if (freqs[1] == 2) return 2
+                return 1
             }
-            return 1
         }
         return 0
     }
-    fun compareHands(hand1: Pair<String, Int>, hand2: Pair<String, Int>): Int {
-        val type1 = pickType(hand1)
-        val type2 = pickType(hand2)
+    fun compareHands(h1: Pair<String, Int>, h2: Pair<String, Int>): Int {
+        val type1 = pickType(h1)
+        val type2 = pickType(h2)
+        val c1 = h1.first
+        val c2 = h2.first
         if (type1 != type2) {
             return type1 - type2
         }
-        // highest card
-        // a > k > q > j > t > 9 > 8...
         val valueMap = mapOf('A' to 14, 'K' to 13, 'Q' to 12, 'J' to 1, 'T' to 10)
         for (i in 0..4) {
-            if (hand1.first[i] != hand2.first[i]) {
-                return valueMap.getOrDefault(hand1.first[i], hand1.first[i].digitToIntOrNull())!! -
-                        valueMap.getOrDefault(hand2.first[i], hand2.first[i].digitToIntOrNull())!!
+            if (c1[i] != c2[i]) {
+                return valueMap.getOrDefault(c1[i], c1[i].digitToIntOrNull())!! -
+                        valueMap.getOrDefault(c2[i], c2[i].digitToIntOrNull())!!
             }
         }
         return 0
@@ -124,7 +117,7 @@ class Day07(input: String, isTest : Boolean = false) : Day(input, isTest) {
         }
         // highest card
         // a > k > q > j > t > 9 > 8...
-        val valueMap = mapOf('A' to 14, 'K' to 13, 'Q' to 12, 'J' to 10, 'T' to 10)
+        val valueMap = mapOf('A' to 14, 'K' to 13, 'Q' to 12, 'J' to 11, 'T' to 10)
         for (i in 0..4) {
             if (hand1.first[i] != hand2.first[i]) {
                 return valueMap.getOrDefault(hand1.first[i], hand1.first[i].digitToIntOrNull())!! -

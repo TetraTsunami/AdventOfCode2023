@@ -36,7 +36,7 @@ class Day03(input: String, isTest : Boolean = false) : Day(input, isTest) {
                             charIndex++
                             continue
                         }
-                        pt(lineNo, charIndex, line[lineNo], line[charIndex])
+                        ptl(lineNo, charIndex, line[lineNo], line[charIndex])
                         if (lines[lineNo][charIndex].isDigit()) {
                             val (res, index) = restOfNumber(lines[lineNo], charIndex)
                             adjacent.add(res)

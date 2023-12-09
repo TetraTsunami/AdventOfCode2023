@@ -77,7 +77,10 @@ abstract class Day(protected var input: String, protected val isTest: Boolean) {
     /**
      * Print a message to the console if the day is in test mode. Useful for debugging.
      */
-    fun pt(vararg message: Any) {
+    fun ptl(vararg message: Any) {
         if (isTest) println(message.joinToString(" "))
+    }
+    fun pt(vararg message: Any) {
+        if (isTest) print(message.joinToString(" "))
     }
 }

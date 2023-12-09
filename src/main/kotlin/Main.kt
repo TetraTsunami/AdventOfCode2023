@@ -39,7 +39,7 @@ fun runAll() {
 /**
  * Run a specific day.
  */
-fun runDay(day: Int, useTests: Boolean = true) {
+fun runDay(day: Int, debug: Boolean = true) {
     try {
         val dayString = day.toString().padStart(2, '0')
         val dayClass = Class.forName("adventOfCode$year.Day$dayString")
@@ -53,7 +53,7 @@ fun runDay(day: Int, useTests: Boolean = true) {
         }
 
         // If the test file exists, run the day with the test input first.
-        if (useTests && File("src/main/resources/Day${dayString}test.txt").exists()) {
+        if (debug && File("src/main/resources/Day${dayString}test.txt").exists()) {
             val dayData = File("src/main/resources/Day${dayString}test.txt").readText()
             val dayInstance = dayConstructor.newInstance(dayData, true)
             println("Day $day (test)")
@@ -62,7 +62,7 @@ fun runDay(day: Int, useTests: Boolean = true) {
 
         // Run the day with the real input.
         val dayData = File("src/main/resources/Day${dayString}.txt").readText()
-        val dayInstance = dayConstructor.newInstance(dayData, false)
+        val dayInstance = dayConstructor.newInstance(dayData, debug)
         println("Day $day")
         dayInstance.javaClass.getMethod("run").invoke(dayInstance)
     } catch (e: ClassNotFoundException) {
@@ -98,10 +98,8 @@ fun loadAndSaveToday() {
 
     val dayData = loadAndSaveDate(year, day)
     println("Day $day")
-    println("Example input:")
-    println(dayData.exampleInput.split("\n").joinToString("\n") { "\t$it" })
-    println("Input:")
-    println(dayData.input.split("\n").joinToString("\n") { "\t$it" })
+    println("Example input: ${dayData.exampleInput.split("\n").size} lines")
+    println("Input: ${dayData.input.split("\n").size} lines")
 }
 
 fun loadAndSaveDate(year: Int, day: Int): DayPuzzle {

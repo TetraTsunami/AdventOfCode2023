@@ -30,7 +30,7 @@ class Day02(input: String, isTest : Boolean = false) : Day(input, isTest) {
                 sum1 += id.toInt()
             }
             sum2 += (maxR * maxG * maxB)
-            pt(maxR, maxG, maxB)
+            ptl(maxR, maxG, maxB)
         }
         a(sum1, sum2)
     }
