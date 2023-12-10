@@ -45,24 +45,55 @@ class Day10(input: String, context: RunContext = RunContext.PROD) : Day(input, c
                     ptl("Pos: $cur, NextDir: $nextDir, pipe: $pipe, validDirs: $validDirs")
                 }
         }
-        // draw path out of vd1
+        a(vd1.size / 2 + 1)
+
+        // draw path out of vd1 (it's pretty, and maybe also helps for part 2)
         val newGrid = Grid2D(lines[0].length, lines.size, ' ')
         newGrid[animal.x, animal.y] = 'S'
-        for ((i, v) in vd1.withIndex()) {
+        for (v in vd1) {
             newGrid[v.x, v.y] = grid[v]
         }
-        pl()
+        var s2 = 0
+        for (y in 0 until newGrid.height) {
+            var p = 0
+            var lastSeen = ' '
+            for (x in 0 until newGrid.width) {
+                when (newGrid[x, y]) {
+                    ' ' -> {
+                        if (p % 2 == 1) {
+                            s2++
+                            newGrid[x, y] = 'I'
+                        }
+                        lastSeen = ' '
+                    }
+                    '|' -> {
+                        lastSeen = ' '
+                        p++
+                    }
+                    'F', '7' -> {
+                        if (lastSeen == 'J') {
+                            p++
+                        } else {
+                            lastSeen = 'F'
+                        }
+                    }
+                    'J', 'L' -> {
+                        if (lastSeen == 'F') {
+                            p++
+                        } else {
+                            lastSeen = 'J'
+                        }
+                    }
+                }
+            }
+        }
         pl(newGrid)
-
-        a(vd1.size / 2 + 1)
+        a(s2)
 
     }
 
     fun nextDir(start: Vector2D, target: Vector2D, targetValue: Char): Vector2D? {
         val diff = target - start
-        if (diff !in Vector2D.cardinalDirections) {
-            return null
-        }
         // target value should be in pipes, see if our diff is valid and return the other one
         val validDirs = pipes[targetValue]!!
         if ((diff * -1) in validDirs) {

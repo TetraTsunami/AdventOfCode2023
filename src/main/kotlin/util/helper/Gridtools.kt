@@ -9,7 +9,7 @@ import util.templates.Vector2D
  * @param default The default value of the grid.
  */
 class Grid2D<T>(val width: Int, val height: Int, val default: T) {
-    private val grid = MutableList(width) { MutableList(height) { default } }
+    private val grid = MutableList(height) { MutableList(width) { default } }
 
     /**
      * Returns the value at the given vector. The origin is (0, 0) in the bottom-left corner.
