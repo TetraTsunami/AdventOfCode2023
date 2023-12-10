@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day03(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day03(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     override fun solve() {
         var s1 = 0
         var s2 = 0

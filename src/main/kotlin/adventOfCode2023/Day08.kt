@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day08(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day08(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     override fun solve() {
         var nodes = mutableMapOf<String, Pair<String, String>>()
         for (line in lines.subList(2, lines.size)) {

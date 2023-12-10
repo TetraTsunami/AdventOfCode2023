@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day04(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day04(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     override fun solve() {
         var s1 = 0
         val cardCollection = mutableMapOf(0 to 1)

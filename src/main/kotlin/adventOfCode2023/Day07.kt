@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day07(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day07(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     fun getFreqMap(hand: Pair<String, Int>): Map<Char, Int> {
         val freqMap = mutableMapOf<Char, Int>()
         var j = 0

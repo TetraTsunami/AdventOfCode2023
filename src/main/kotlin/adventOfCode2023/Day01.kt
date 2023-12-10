@@ -3,7 +3,7 @@ import util.*
 import util.Constants.zeroToNine
 
 @Suppress("unused")
-class Day01(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day01(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     override fun solve() {
         val regex1 = Regex("[0-9]")
         lines.map {line ->

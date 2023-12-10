@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day06(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day06(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     fun howFar(holdTime: Long, raceTime: Long): Long {
         val goTime = raceTime - holdTime
         return goTime * holdTime

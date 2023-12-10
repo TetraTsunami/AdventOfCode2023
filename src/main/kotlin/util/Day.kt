@@ -2,7 +2,11 @@
 package util
 
 class DayCompleteException(message: String) : Exception(message)
-abstract class Day(protected var input: String, protected val isTest: Boolean) {
+
+enum class RunContext {
+    TEST, ONE, PROD
+}
+abstract class Day(protected var input: String, protected val context: RunContext = RunContext.PROD) {
     protected val startTime = System.currentTimeMillis()
     protected val lines: List<String>
     protected var part1Solved = false
@@ -78,9 +82,19 @@ abstract class Day(protected var input: String, protected val isTest: Boolean) {
      * Print a message to the console if the day is in test mode. Useful for debugging.
      */
     fun ptl(vararg message: Any) {
-        if (isTest) println(message.joinToString(" "))
+        if (context == RunContext.TEST) println(message.joinToString(" "))
     }
     fun pt(vararg message: Any) {
-        if (isTest) print(message.joinToString(" "))
+        if (context == RunContext.TEST) print(message.joinToString(" "))
+    }
+
+    /**
+     * Print a message to the console if the day is in test or one mode. Useful for debugging.
+     */
+    fun pl(vararg message: Any) {
+        if (context != RunContext.PROD) println(message.joinToString(" "))
+    }
+    fun p(vararg message: Any) {
+        if (context != RunContext.PROD) print(message.joinToString(" "))
     }
 }

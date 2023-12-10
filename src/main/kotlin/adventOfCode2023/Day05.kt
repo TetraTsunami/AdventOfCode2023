@@ -2,7 +2,7 @@ package adventOfCode2023
 import util.*
 
 @Suppress("unused")
-class Day05(input: String, isTest : Boolean = false) : Day(input, isTest) {
+class Day05(input: String, context: RunContext = RunContext.PROD) : Day(input, context) {
     data class RangeMap(val destStart: Long, val srcStart: Long, val rangeLen: Long) {
         val srcEnd = srcStart + rangeLen
         val destEnd = destStart + rangeLen
