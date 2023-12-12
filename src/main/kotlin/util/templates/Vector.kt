@@ -1,5 +1,6 @@
 package util.templates
 
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 class Vector2D(val x: Int, val y: Int) {
@@ -40,5 +41,9 @@ class Vector2D(val x: Int, val y: Int) {
         var result = x.hashCode()
         result = 31 * result + y.hashCode()
         return result
+    }
+
+    fun manhattanDistance(g2: Vector2D): Int {
+        return abs(g2.x - x) + abs(g2.y - y)
     }
 }

@@ -62,7 +62,7 @@ fun runDay(day: Int, debug: Boolean = true) {
 
         // Run the day with the real input.
         val dayData = File("src/main/resources/Day${dayString}.txt").readText()
-        val dayInstance = dayConstructor.newInstance(dayData, RunContext.ONE)
+        val dayInstance = dayConstructor.newInstance(dayData, if (debug) RunContext.ONE else RunContext.PROD)
         println("Day $day")
         dayInstance.javaClass.getMethod("run").invoke(dayInstance)
     } catch (e: ClassNotFoundException) {

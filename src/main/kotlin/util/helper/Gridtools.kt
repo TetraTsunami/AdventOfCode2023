@@ -15,7 +15,7 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
      * Returns the value at the given vector. The origin is (0, 0) in the bottom-left corner.
      */
     operator fun get(x: Int, y: Int): T {
-        return grid[grid.size - 1 - y][x]
+        return grid[height - 1 - y][x]
     }
 
     operator fun get(vector: Vector2D): T {
@@ -23,11 +23,22 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
     }
 
     operator fun set(x: Int, y: Int, value: T) {
-        grid[grid.size - 1 - y][x] = value
+        grid[height - 1 - y][x] = value
     }
 
     operator fun set(vector: Vector2D, value: T) {
         this[vector.x, vector.y] = value
+    }
+
+    fun rows(): List<List<T>> {
+        return grid.map { it.toList() }.reversed()
+    }
+    fun columns(): List<List<T>> {
+        val columns = mutableListOf<MutableList<T>>()
+        for (x in 0 until width) {
+            columns.add(MutableList(height) { this[x, it] })
+        }
+        return columns.map { it.toList() }
     }
 
     /**
