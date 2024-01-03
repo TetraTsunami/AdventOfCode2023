@@ -23,17 +23,17 @@ class Day10(input: String, context: RunContext = RunContext.PROD) : Day(input, c
         val vd1 = mutableListOf<Vector2D>()
         var cur = animal.copy()
         var nextDir: Vector2D?
-        ptl(grid)
-        ptl("Animal at $cur")
-        ptl()
+        plt(grid)
+        plt("Animal at $cur")
+        plt()
         grid.getNeighbors(cur)
             .first { nextDir(cur, it.second, it.first) != null }
             .let {
                 nextDir = nextDir(cur, it.second, it.first)
-                ptl("$nextDir, ${it.first}")
+                plt("$nextDir, ${it.first}")
                 cur = it.second
             }
-        ptl("Starting at $cur, going $nextDir")
+        plt("Starting at $cur, going $nextDir")
 
         while (cur != animal) {
             grid[cur + nextDir!!]
@@ -42,7 +42,7 @@ class Day10(input: String, context: RunContext = RunContext.PROD) : Day(input, c
                     val validDirs = pipes[pipe]!!
                     cur += nextDir!!
                     nextDir = validDirs.firstOrNull { it != (nextDir!! * -1) }
-                    ptl("Pos: $cur, NextDir: $nextDir, pipe: $pipe, validDirs: $validDirs")
+                    plt("Pos: $cur, NextDir: $nextDir, pipe: $pipe, validDirs: $validDirs")
                 }
         }
         a(vd1.size / 2 + 1)

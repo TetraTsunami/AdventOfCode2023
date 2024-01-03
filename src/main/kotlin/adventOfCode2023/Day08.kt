@@ -29,7 +29,7 @@ class Day08(input: String, context: RunContext = RunContext.PROD) : Day(input, c
             }
             i++
         }
-        ptl(i)
+        plt(i)
         return i
     }
 
@@ -40,12 +40,12 @@ class Day08(input: String, context: RunContext = RunContext.PROD) : Day(input, c
         var lcm = larger
         while (lcm <= maxLcm) {
             if (lcm % a == 0L && lcm % b == 0L) {
-                ptl(lcm)
+                plt(lcm)
                 return lcm
             }
             lcm += larger
         }
-        ptl(maxLcm)
+        plt(maxLcm)
         return maxLcm
     }
 }

@@ -35,7 +35,7 @@ abstract class Day(protected var input: String, protected val context: RunContex
     /**
      * Used in constructor to parse input. Override this if it's helpful to parse differently.
      */
-    fun parseToList(): List<String> {
+    open fun parseToList(): List<String> {
         val lines = input.lines()
         if (lines.last().isEmpty()) return lines.dropLast(1)
         return lines
@@ -81,7 +81,7 @@ abstract class Day(protected var input: String, protected val context: RunContex
     /**
      * Print a message to the console if the day is in test mode. Useful for debugging.
      */
-    fun ptl(vararg message: Any) {
+    fun plt(vararg message: Any) {
         if (context == RunContext.TEST) println(message.joinToString(" "))
     }
     fun pt(vararg message: Any) {

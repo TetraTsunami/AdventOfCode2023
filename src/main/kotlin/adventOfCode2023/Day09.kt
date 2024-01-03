@@ -21,11 +21,11 @@ class Day09(input: String, context: RunContext = RunContext.PROD) : Day(input, c
             next = 0
             for (derivs in deriv.reversed().drop(1)) {
                 next = derivs.first() - next
-                ptl("$next $derivs")
+                plt("$next $derivs")
             }
-            ptl("$next $words")
+            plt("$next $words")
             s2 += words.first() - next
-            ptl()
+            plt()
         }
         a(s1, s2)
     }

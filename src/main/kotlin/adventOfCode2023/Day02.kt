@@ -30,7 +30,7 @@ class Day02(input: String, context: RunContext = RunContext.PROD) : Day(input, c
                 sum1 += id.toInt()
             }
             sum2 += (maxR * maxG * maxB)
-            ptl(maxR, maxG, maxB)
+            plt(maxR, maxG, maxB)
         }
         a(sum1, sum2)
     }

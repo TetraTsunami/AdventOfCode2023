@@ -3,7 +3,7 @@ package util.helper
 import util.templates.Vector2D
 
 /**
- * A 2D grid of values. The origin is (0, 0) in the bottom-left corner!!!
+ * A 2D grid of values. The origin is (0, 0) in the top-left corner, and the y-axis is inverted.
  * @param width The width of the grid.
  * @param height The height of the grid.
  * @param default The default value of the grid.
@@ -15,7 +15,7 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
      * Returns the value at the given vector. The origin is (0, 0) in the bottom-left corner.
      */
     operator fun get(x: Int, y: Int): T {
-        return grid[height - 1 - y][x]
+        return grid[y][x]
     }
 
     operator fun get(vector: Vector2D): T {
@@ -23,7 +23,7 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
     }
 
     operator fun set(x: Int, y: Int, value: T) {
-        grid[height - 1 - y][x] = value
+        grid[y][x] = value
     }
 
     operator fun set(vector: Vector2D, value: T) {
@@ -31,7 +31,7 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
     }
 
     fun rows(): List<List<T>> {
-        return grid.map { it.toList() }.reversed()
+        return grid.map { it.toList() }
     }
     fun columns(): List<List<T>> {
         val columns = mutableListOf<MutableList<T>>()
@@ -49,7 +49,6 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
      */
     fun getNeighbors(x: Int, y: Int, includeDiagonals: Boolean = false, includeSelf: Boolean = false): List<Pair<T, Vector2D>> {
         val neighbors = mutableListOf<Pair<T, Vector2D>>()
-        val test = this[x, y]
         if (x > 0) neighbors.add(Pair(this[x - 1, y], Vector2D(x - 1, y)))
         if (x < width - 1) neighbors.add(Pair(this[x + 1, y], Vector2D(x + 1, y)))
         if (y > 0) neighbors.add(Pair(this[x, y - 1], Vector2D(x, y - 1)))
@@ -67,7 +66,7 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
     }
 
     fun getNeighbors(vector: Vector2D, includeDiagonals: Boolean = false, includeSelf: Boolean = false): List<Pair<T, Vector2D>> {
-        return getNeighbors(vector.x, vector.y, includeDiagonals)
+        return getNeighbors(vector.x, vector.y, includeDiagonals, includeSelf)
     }
 
     /**
@@ -108,7 +107,17 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
             val grid = Grid2D(lines[0].size, lines.size, default)
             for ((y, line) in lines.withIndex()) {
                 for ((x, el) in line.withIndex()) {
-                    grid[x, lines.size - 1 - y] = el
+                    grid[x, y] = el
+                }
+            }
+            return grid
+        }
+        fun fromLines(lines: String, default: Char = ' '): Grid2D<Char> {
+            val split = lines.lines().filter { it.isNotBlank() }
+            val grid = Grid2D(split[0].length, split.size, default)
+            for ((y, line) in split.withIndex()) {
+                for ((x, el) in line.withIndex()) {
+                    grid[x, y] = el
                 }
             }
             return grid
