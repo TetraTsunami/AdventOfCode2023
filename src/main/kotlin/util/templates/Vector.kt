@@ -9,7 +9,7 @@ class Vector2D(val x: Int, val y: Int) {
         val SOUTH = Vector2D(0, -1)
         val EAST = Vector2D(1, 0)
         val WEST = Vector2D(-1, 0)
-        val cardinalDirections = setOf(NORTH, SOUTH, EAST, WEST)
+        val CARDDIRS = setOf(NORTH, SOUTH, EAST, WEST)
     }
 
     operator fun plus(v: Vector2D): Vector2D {
@@ -45,5 +45,13 @@ class Vector2D(val x: Int, val y: Int) {
 
     fun manhattanDistance(g2: Vector2D): Int {
         return abs(g2.x - x) + abs(g2.y - y)
+    }
+
+    operator fun component1(): Int {
+        return x
+    }
+
+    operator fun component2(): Int {
+        return y
     }
 }

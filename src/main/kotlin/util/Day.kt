@@ -33,9 +33,9 @@ abstract class Day(protected var input: String, protected val context: RunContex
     abstract fun solve()
 
     /**
-     * Used in constructor to parse input. Override this if it's helpful to parse differently.
+     * Parse input to a list of strings.
      */
-    open fun parseToList(): List<String> {
+    fun parseToList(): List<String> {
         val lines = input.lines()
         if (lines.last().isEmpty()) return lines.dropLast(1)
         return lines

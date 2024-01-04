@@ -86,9 +86,9 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
      */
     fun vectorsOf(value: T): List<Vector2D> {
         val vectors = mutableListOf<Vector2D>()
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                if (this[x, y] == value) vectors.add(Vector2D(x, y))
+        for (line in grid) {
+            for ((x, el) in line.withIndex()) {
+                if (el == value) vectors.add(Vector2D(x, grid.indexOf(line)))
             }
         }
         return vectors
@@ -98,8 +98,35 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
         return grid.joinToString("\n") { it.joinToString("") }
     }
 
+    fun toStringLabelled(labelX: Boolean, labelY: Boolean): String {
+        val string = this.toString()
+        var lines = string.lines().toMutableList()
+        if (labelY) {
+            lines = lines.mapIndexed { i, it -> "$it $i" }.toMutableList()
+        }
+        if (labelX) {
+            lines.add(" ".repeat(width).mapIndexed { i, _ -> i % 10 }.joinToString(""))
+        }
+        return lines.joinToString("\n")
+    }
+
     fun toLines(): List<List<T>> {
         return grid.map { it.toList() }
+    }
+
+    fun copy(): Grid2D<T> {
+        return fromLines(grid, default)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Grid2D<*>) return false
+        if (other.width != width || other.height != height) return false
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                if (this[x, y] != other[x, y]) return false
+            }
+        }
+        return true
     }
 
     companion object {
