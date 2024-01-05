@@ -47,7 +47,7 @@ abstract class Day(protected var input: String, protected val context: RunContex
     fun parseInput(): String {
         if (input.lines().size == 2) {
             // single line
-            return input.dropLast(2) // drop \r\n
+            return input.trim('\n', '\r', ' ')
         }
         return input
     }
