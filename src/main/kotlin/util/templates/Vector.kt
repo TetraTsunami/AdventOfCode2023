@@ -1,7 +1,6 @@
 package util.templates
 
 import kotlin.math.abs
-import kotlin.math.sqrt
 
 class Vector2D(val x: Int, val y: Int) {
     companion object {
@@ -49,6 +48,27 @@ class Vector2D(val x: Int, val y: Int) {
 
     fun manhattanDistance(g2: Vector2D): Int {
         return abs(g2.x - x) + abs(g2.y - y)
+    }
+
+    /**
+     * If this vector is a cardinal direction, return the char representation
+     */
+    fun toCharOrNull(): Char? {
+        return when (this) {
+            NORTH -> '^'
+            SOUTH -> 'v'
+            EAST -> '>'
+            WEST -> '<'
+            else -> null
+        }
+    }
+
+    fun rotLeft(): Vector2D {
+        return Vector2D(-y, x)
+    }
+
+    fun rotRight(): Vector2D {
+        return Vector2D(y, -x)
     }
 
     operator fun component1(): Int {

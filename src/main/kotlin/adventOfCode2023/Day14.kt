@@ -1,6 +1,6 @@
 package adventOfCode2023
 import util.*
-import util.helper.Grid2D
+import util.templates.Grid2D
 import util.templates.Vector2D
 
 @Suppress("unused")
@@ -8,7 +8,7 @@ class Day14(input: String, context: RunContext = RunContext.PROD) : Day(input, c
     override fun solve() {
         val grid = Grid2D.fromLines(input)
         var s1 = 0
-        plt(grid.toStringLabelled(true, true))
+        plt(grid.toStringLabelled())
         grid.vectorsOf('O').forEach {
             // starting from the top, move down until our vector
             // count the number of O on the way, and reset count to the height of a #

@@ -1,6 +1,6 @@
 package adventOfCode2023
 import util.*
-import util.helper.Grid2D
+import util.templates.Grid2D
 import util.helper.Itertools
 import java.util.Collections
 

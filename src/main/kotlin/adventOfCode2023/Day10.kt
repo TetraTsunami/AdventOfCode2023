@@ -1,6 +1,6 @@
 package adventOfCode2023
 import util.*
-import util.helper.Grid2D
+import util.templates.Grid2D
 import util.templates.Vector2D
 
 @Suppress("unused")
@@ -27,11 +27,11 @@ class Day10(input: String, context: RunContext = RunContext.PROD) : Day(input, c
         plt("Animal at $cur")
         plt()
         grid.getNeighbors(cur)
-            .first { nextDir(cur, it.second, it.first) != null }
+            .first { nextDir(cur, it, grid[it]) != null }
             .let {
-                nextDir = nextDir(cur, it.second, it.first)
-                plt("$nextDir, ${it.first}")
-                cur = it.second
+                nextDir = nextDir(cur, it, grid[it])
+                plt("$nextDir, ${grid[it]}")
+                cur = it
             }
         plt("Starting at $cur, going $nextDir")
 

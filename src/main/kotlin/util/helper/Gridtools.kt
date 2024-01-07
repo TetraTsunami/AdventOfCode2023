@@ -1,159 +1,103 @@
 package util.helper
 
+import util.templates.Grid2D
 import util.templates.Vector2D
+import java.util.PriorityQueue
+import kotlin.collections.ArrayDeque
 
-/**
- * A 2D grid of values. The origin is (0, 0) in the top-left corner, and the y-axis is inverted.
- * @param width The width of the grid.
- * @param height The height of the grid.
- * @param default The default value of the grid.
- */
-class Grid2D<T>(val width: Int, val height: Int, val default: T) {
-    private val grid = MutableList(height) { MutableList(width) { default } }
-
+object Gridtools {
     /**
-     * Returns the value at the given vector. The origin is (0, 0) in the bottom-left corner.
+     * Returns a map of all reachable nodes from start, and the direction to get there
+     * https://www.redblobgames.com/pathfinding/a-star/implementation.html#python-early-exit
+     * @param end If not null, the search will stop when this node is reached
+     * @return A map of all reachable nodes from start, and the direction to get there
      */
-    operator fun get(x: Int, y: Int): T {
-        return grid[y][x]
-    }
-
-    operator fun get(vector: Vector2D): T {
-        return this[vector.x, vector.y]
-    }
-
-    operator fun set(x: Int, y: Int, value: T) {
-        grid[y][x] = value
-    }
-
-    operator fun set(vector: Vector2D, value: T) {
-        this[vector.x, vector.y] = value
-    }
-
-    fun rows(): List<List<T>> {
-        return grid.map { it.toList() }
-    }
-    fun columns(): List<List<T>> {
-        val columns = mutableListOf<MutableList<T>>()
-        for (x in 0 until width) {
-            columns.add(MutableList(height) { this[x, it] })
-        }
-        return columns.map { it.toList() }
-    }
-
-    /**
-     * Returns the neighbors of the given vector (sorted by lowest y, then lowest x).
-     * @param includeDiagonals Whether to include diagonal neighbors.
-     * @param includeSelf Whether to include the vector itself.
-     * @return A list of pairs of the neighbor value and the neighbor vector from the origin.
-     */
-    fun getNeighbors(x: Int, y: Int, includeDiagonals: Boolean = false, includeSelf: Boolean = false): List<Pair<T, Vector2D>> {
-        val neighbors = mutableListOf<Pair<T, Vector2D>>()
-        if (x > 0) neighbors.add(Pair(this[x - 1, y], Vector2D(x - 1, y)))
-        if (x < width - 1) neighbors.add(Pair(this[x + 1, y], Vector2D(x + 1, y)))
-        if (y > 0) neighbors.add(Pair(this[x, y - 1], Vector2D(x, y - 1)))
-        if (y < height - 1) neighbors.add(Pair(this[x, y + 1], Vector2D(x, y + 1)))
-        if (includeDiagonals) {
-            if (x > 0 && y > 0) neighbors.add(Pair(this[x - 1, y - 1], Vector2D(x - 1, y - 1)))
-            if (x < width - 1 && y > 0) neighbors.add(Pair(this[x + 1, y - 1], Vector2D(x + 1, y - 1)))
-            if (x > 0 && y < height - 1) neighbors.add(Pair(this[x - 1, y + 1], Vector2D(x - 1, y + 1)))
-            if (x < width - 1 && y < height - 1) neighbors.add(Pair(this[x + 1, y + 1], Vector2D(x + 1, y + 1)))
-        }
-        if (includeSelf) neighbors.add(Pair(grid[x][y], Vector2D(x, y)))
-        neighbors.sortBy { it.second.x }
-        neighbors.sortBy { it.second.y }
-        return neighbors
-    }
-
-    fun getNeighbors(vector: Vector2D, includeDiagonals: Boolean = false, includeSelf: Boolean = false): List<Pair<T, Vector2D>> {
-        return getNeighbors(vector.x, vector.y, includeDiagonals, includeSelf)
-    }
-
-    /**
-     * Returns the first vector that matches the given value (sorted by y, then x), or null if none are found.
-     */
-    fun vectorOf(value: T): Vector2D? {
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                if (this[x, y] == value) return Vector2D(x, y)
-            }
-        }
-        return null
-    }
-
-    /**
-     * Returns all vectors with the given value (sorted by y, then x).
-     */
-    fun vectorsOf(value: T): List<Vector2D> {
-        val vectors = mutableListOf<Vector2D>()
-        for (line in grid) {
-            for ((x, el) in line.withIndex()) {
-                if (el == value) vectors.add(Vector2D(x, grid.indexOf(line)))
-            }
-        }
-        return vectors
-    }
-
-    override fun toString(): String {
-        return grid.joinToString("\n") { it.joinToString("") }
-    }
-
-    fun toStringLabelled(labelX: Boolean, labelY: Boolean): String {
-        val string = this.toString()
-        var lines = string.lines().toMutableList()
-        if (labelY) {
-            lines = lines.mapIndexed { i, it -> "$it $i" }.toMutableList()
-        }
-        if (labelX) {
-            lines.add(" ".repeat(width).mapIndexed { i, _ -> i % 10 }.joinToString(""))
-        }
-        return lines.joinToString("\n")
-    }
-
-    fun toLines(): List<List<T>> {
-        return grid.map { it.toList() }
-    }
-
-    fun copy(): Grid2D<T> {
-        return fromLines(grid, default)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is Grid2D<*>) return false
-        if (other.width != width || other.height != height) return false
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                if (this[x, y] != other[x, y]) return false
-            }
-        }
-        return true
-    }
-
-    fun isInBounds(coordinate: Vector2D): Boolean {
-        if (coordinate.x > width - 1 || coordinate.x < 0) return false
-        if (coordinate.y > height - 1 || coordinate.y < 0) return false
-        return true
-    }
-
-    companion object {
-        fun <T> fromLines(lines: List<List<T>>, default: T): Grid2D<T> {
-            val grid = Grid2D(lines[0].size, lines.size, default)
-            for ((y, line) in lines.withIndex()) {
-                for ((x, el) in line.withIndex()) {
-                    grid[x, y] = el
+    private fun mapBreadthFirstSearch(grid: Grid2D<Boolean>, start: Vector2D, end: Vector2D?): Map<Vector2D, Vector2D?> {
+        val queue = ArrayDeque<Vector2D>()
+        queue.add(start)
+        val reached = mutableSetOf(start)
+        val fromDirection = mutableMapOf<Vector2D, Vector2D?>(start to null)
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            if (current == end) break
+            for (next in grid.getAltNeighbors(current)) {
+                if (next !in reached && grid[next]) {
+                    queue.addLast(next)
+                    reached.add(next)
+                    fromDirection[next] = current - next
                 }
             }
-            return grid
         }
-        fun fromLines(lines: String, default: Char = ' '): Grid2D<Char> {
-            val split = lines.lines().filter { it.isNotBlank() }
-            val grid = Grid2D(split[0].length, split.size, default)
-            for ((y, line) in split.withIndex()) {
-                for ((x, el) in line.withIndex()) {
-                    grid[x, y] = el
+        return fromDirection
+    }
+
+    /**
+     * Returns a list of nodes from start to end, or an empty list if no path exists
+     */
+    fun breadthFirstSearch(grid: Grid2D<Boolean>, start: Vector2D, end: Vector2D): List<Vector2D> {
+        val fromDirection = mapBreadthFirstSearch(grid, start, end)
+        val path = mutableListOf<Vector2D>()
+        var current = end
+        while (current != start) {
+            path.add(current)
+            current += fromDirection[current] ?: return emptyList()
+        }
+        path.add(start)
+        path.reverse()
+        return path
+    }
+
+    /**
+     * Trick to make movement prettier on even-weight grids.
+     * Pretend the grid is a checkerboard (such that a state toggles when moving between cells)
+     *  when true: make horizontal movement slightly more expensive
+     *  when false: make vertical movement slightly more expensive
+     * Encourages tasty zigzags instead of boring straight lines
+     */
+    private fun pathNudge(v1: Vector2D, v2: Vector2D): Int {
+        val checkerboard = (v2.x + v2.y) % 2 == 0
+        if (checkerboard && v2.x != v1.x) return 1
+        if (!checkerboard && v2.y != v1.y) return 1
+        return 0
+    }
+
+    /**
+     * Uses Dijkstra's algorithm to find the shortest path from start to end using an integer weighted grid
+     * https://www.redblobgames.com/pathfinding/a-star/implementation.html#python-search
+     * @return a Pair with 1) the direction field and 2) cost field found by the algorithm
+     */
+    fun mapDijkstrasAlgoSearch(grid: Grid2D<Int>, start: Vector2D, end: Vector2D?, useNudge: Boolean = true):
+            Pair<Map<Vector2D, Vector2D?>, Map<Vector2D, Int>> {
+        val queue = PriorityQueue<Pair<Vector2D, Float>>(compareBy { it.second })
+        queue.add(Pair(start, 0f))
+        val fromDirection = mutableMapOf<Vector2D, Vector2D?>(start to null)
+        val costSoFar = mutableMapOf(start to 0f)
+        while (queue.isNotEmpty()) {
+            val current = queue.remove()
+            if (current.first == end) break
+            for (next in grid.getNeighbors(current.first)) {
+                val nudge = if (useNudge) 0.001f * pathNudge(current.first, next) else 0f
+                val newCost = costSoFar[current.first]!! + nudge + grid[next]
+                if (newCost < costSoFar.getOrDefault(next, Float.POSITIVE_INFINITY)) {
+                    costSoFar[next] = newCost
+                    queue.add(Pair(next, newCost))
+                    fromDirection[next] = current.first - next
                 }
             }
-            return grid
         }
+        return Pair(fromDirection, costSoFar.mapValues { it.value.toInt() })
+    }
+
+    fun dijkstrasAlgoSearch(grid: Grid2D<Int>, start: Vector2D, end: Vector2D): Iterable<Vector2D> {
+        val fromDirection = mapDijkstrasAlgoSearch(grid, start, end).first
+        val path = mutableListOf<Vector2D>()
+        var current = end
+        while (current != start) {
+            path.add(current)
+            current += fromDirection[current] ?: return emptyList()
+        }
+        path.add(start)
+        path.reverse()
+        return path
     }
 }
