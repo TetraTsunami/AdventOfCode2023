@@ -129,6 +129,12 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
         return true
     }
 
+    fun isInBounds(coordinate: Vector2D): Boolean {
+        if (coordinate.x > width - 1 || coordinate.x < 0) return false
+        if (coordinate.y > height - 1 || coordinate.y < 0) return false
+        return true
+    }
+
     companion object {
         fun <T> fromLines(lines: List<List<T>>, default: T): Grid2D<T> {
             val grid = Grid2D(lines[0].size, lines.size, default)

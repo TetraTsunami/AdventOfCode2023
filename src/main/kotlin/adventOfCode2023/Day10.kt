@@ -8,10 +8,10 @@ class Day10(input: String, context: RunContext = RunContext.PROD) : Day(input, c
     val pipes = mapOf(
         '|' to setOf(Vector2D.NORTH, Vector2D.SOUTH),
         '-' to setOf(Vector2D.EAST, Vector2D.WEST),
-        'L' to setOf(Vector2D.NORTH, Vector2D.EAST),
-        '7' to setOf(Vector2D.SOUTH, Vector2D.WEST),
-        'J' to setOf(Vector2D.NORTH, Vector2D.WEST),
-        'F' to setOf(Vector2D.SOUTH, Vector2D.EAST),
+        'L' to setOf(Vector2D.SOUTH, Vector2D.EAST),
+        '7' to setOf(Vector2D.NORTH, Vector2D.WEST),
+        'J' to setOf(Vector2D.SOUTH, Vector2D.WEST),
+        'F' to setOf(Vector2D.NORTH, Vector2D.EAST),
         '.' to setOf(),
         'S' to setOf(),
     )

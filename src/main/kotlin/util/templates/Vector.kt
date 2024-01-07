@@ -43,6 +43,10 @@ class Vector2D(val x: Int, val y: Int) {
         return result
     }
 
+    fun manhattanDistance(): Int {
+        return abs(x) + abs(y)
+    }
+
     fun manhattanDistance(g2: Vector2D): Int {
         return abs(g2.x - x) + abs(g2.y - y)
     }
