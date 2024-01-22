@@ -199,5 +199,142 @@ class Grid2D<T>(val width: Int, val height: Int, val default: T) {
             val stringGrid = grid.map { it.toString().padStart(maxLen, ' ') + " " }
             return stringGrid.toString()
         }
+
+        fun stringGridToString(grid: Grid2D<String>): String {
+            // the idea is to center strings so the grid is readable
+            val max = grid.grid.flatten().maxBy { it.length }
+            val maxLen = max.length
+            val stringGrid = grid.map { it.padStart(maxLen, ' ') + " " }
+            return stringGrid.toString()
+        }
+    }
+}
+
+/**
+ * A 2D grid that extends infinitely in all directions.
+ * The origin is (0, 0) in the bottom-left corner, like a graph.
+ */
+class InfiniteGrid2D<T>(private val default: T) {
+    private val grid = mutableMapOf<Vector2D, T>()
+
+    /**
+     * Returns the value at the given vector. The origin is (0, 0) in the bottom-left corner.
+     */
+    operator fun get(x: Int, y: Int): T {
+        return grid[Vector2D(x, y)] ?: default
+    }
+
+    operator fun get(vector: Vector2D): T {
+        return this[vector.x, vector.y]
+    }
+
+    operator fun set(x: Int, y: Int, value: T) {
+        grid[Vector2D(x, y)] = value
+    }
+
+    operator fun set(vector: Vector2D, value: T) {
+        this[vector.x, vector.y] = value
+    }
+
+    fun minY(): Int {
+        return grid.keys.minOf { it.y }
+    }
+
+    fun maxY(): Int {
+        return grid.keys.maxOf { it.y }
+    }
+
+    fun minX(): Int {
+        return grid.keys.minOf { it.x }
+    }
+
+    fun maxX(): Int {
+        return grid.keys.maxOf { it.x }
+    }
+
+    fun rows(): List<List<T>> {
+        val rows = mutableListOf<MutableList<T>>()
+        for (y in minY()..maxY()) {
+            val row = mutableListOf<T>()
+            for (x in minX()..maxX()) {
+                row.add(this[x, y])
+            }
+            rows.add(row)
+        }
+        return rows
+    }
+
+    fun columns(): List<List<T>> {
+        val columns = mutableListOf<MutableList<T>>()
+        for (x in minX()..maxX()) {
+            val column = mutableListOf<T>()
+            for (y in minY()..maxY()) {
+                column.add(this[x, y])
+            }
+            columns.add(column)
+        }
+        return columns
+    }
+
+    /**
+     * Returns the neighbors of the given vector (E, W, N, S, optionally NE, NW, SE, SW).
+     * @param includeDiagonals Whether to include diagonal neighbors.
+     * @param includeSelf Whether to include the vector itself.
+     * @return A list of neighbor vectors from the origin.
+     */
+    fun getNeighbors(x: Int, y: Int, includeDiagonals: Boolean = false, includeSelf: Boolean = false): Iterable<Vector2D> {
+        val neighbors = mutableListOf<Vector2D>()
+        neighbors.addAll(
+            arrayOf(
+                Vector2D(x + 1, y),
+                Vector2D(x - 1, y),
+                Vector2D(x, y + 1),
+                Vector2D(x, y - 1),
+            )
+        )
+        if (includeDiagonals) {
+            neighbors.addAll(
+                arrayOf(
+                    Vector2D(x + 1, y + 1),
+                    Vector2D(x - 1, y + 1),
+                    Vector2D(x + 1, y - 1),
+                    Vector2D(x - 1, y - 1),
+                )
+            )
+        }
+        if (includeSelf) neighbors.add(Vector2D(x, y))
+        return neighbors
+    }
+
+    fun map(transform: (Vector2D, T) -> T) {
+        for (y in minY()..maxY()) {
+            for (x in minX()..maxX()) {
+                this[x, y] = transform(Vector2D(x, y), this[x, y])
+            }
+        }
+    }
+
+    fun forEach(action: (Vector2D, T) -> Unit) {
+        for (y in minY()..maxY()) {
+            for (x in minX()..maxX()) {
+                action(Vector2D(x, y), this[x, y])
+            }
+        }
+    }
+
+    fun sumOf(selector: (Vector2D, T) -> Int): Int {
+        var sum = 0
+        for (y in minY()..maxY()) {
+            for (x in minX()..maxX()) {
+                sum += selector(Vector2D(x, y), this[x, y])
+            }
+        }
+        return sum
+    }
+
+    override fun toString(): String {
+        val rows = rows()
+        val stringRows = rows.map { it.joinToString("") }
+        return stringRows.joinToString("\n")
     }
 }

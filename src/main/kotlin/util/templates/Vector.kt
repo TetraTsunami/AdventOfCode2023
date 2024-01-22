@@ -1,6 +1,7 @@
 package util.templates
 
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 class Vector2D(val x: Int, val y: Int) {
     companion object {
@@ -53,13 +54,13 @@ class Vector2D(val x: Int, val y: Int) {
     /**
      * If this vector is a cardinal direction, return the char representation
      */
-    fun toCharOrNull(): Char? {
+    fun toChar(): Char {
         return when (this) {
-            NORTH -> '^'
-            SOUTH -> 'v'
+            NORTH -> 'v'
+            SOUTH -> '^'
             EAST -> '>'
             WEST -> '<'
-            else -> null
+            else -> '.'
         }
     }
 
@@ -69,6 +70,14 @@ class Vector2D(val x: Int, val y: Int) {
 
     fun rotRight(): Vector2D {
         return Vector2D(y, -x)
+    }
+
+    fun magnitude(): Double {
+        return sqrt((x * x + y * y).toDouble())
+    }
+
+    fun isParallel(v: Vector2D): Boolean {
+        return (x * v.y - y * v.x) == 0
     }
 
     operator fun component1(): Int {
